@@ -1,0 +1,5 @@
+.push_template:
+  stage: push
+  script:
+    - docker push "$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
+  retry: 2

@@ -1,0 +1,15 @@
+stages:
+  - build
+  - push
+  - deploy
+
+before_script:
+  - rm -rf /etc/resolv.conf
+  # Need to create /etc/resolv.conf.shecan file with shecan ip for iranian servers in the runner server
+  - cp /etc/resolv.conf.shecan /etc/resolv.conf
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+include:
+  - local: './.ci-cd/build.yml'
+  - local: './.ci-cd/push.yml'
+  - local: './.ci-cd/deploy.yml'

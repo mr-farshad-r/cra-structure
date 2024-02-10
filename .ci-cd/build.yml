@@ -1,0 +1,15 @@
+.build_template:
+  stage: build
+  retry: 2
+  script:
+    - docker build --tag="$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG" .
+  artifacts:
+    name: 'docker-image-$CI_REGISTRY_IMAGE-$CI_COMMIT_REF_NAME-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG'
+    paths:
+      - ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}.tar
+    expire_in: 1 week
+  cache:
+    key: node_modules
+    paths:
+      - node_modules
+    policy: pull

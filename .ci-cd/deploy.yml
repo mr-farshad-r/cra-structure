@@ -1,0 +1,7 @@
+.deploy_template:
+  stage: deploy
+  retry: 2
+  script:
+    - docker-compose pull
+    - docker stack rm $CI_PROJECT_NAME
+    - docker stack deploy -c docker-compose.yml $CI_PROJECT_NAME
