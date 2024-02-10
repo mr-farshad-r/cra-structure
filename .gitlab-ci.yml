@@ -10,6 +10,6 @@ before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 include:
-  - local: '/.gitlab-ci/build.yml'
-  - local: '/.gitlab-ci/push.yml'
-  - local: '/.gitlab-ci/deploy.yml'
+  - '/.gitlab-ci/build.yml'
+  - '/.gitlab-ci/push.yml'
+  - '/.gitlab-ci/deploy.yml'
