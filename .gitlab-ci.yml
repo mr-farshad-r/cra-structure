@@ -9,7 +9,32 @@ before_script:
   - cp /etc/resolv.conf.shecan /etc/resolv.conf
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-include:
-  - '/.gitlab-ci/build.yml'
-  - '/.gitlab-ci/push.yml'
-  - '/.gitlab-ci/deploy.yml'
+Build:
+  stage: build
+  retry: 2
+  script:
+    - docker build --tag="$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG" .
+  artifacts:
+    name: 'docker-image-$CI_REGISTRY_IMAGE-$CI_COMMIT_REF_NAME-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG'
+    paths:
+      - ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}.tar
+    expire_in: 1 week
+  cache:
+    key: node_modules
+    paths:
+      - node_modules
+    policy: pull
+
+Push:
+  stage: push
+  script:
+    - docker push "$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
+  retry: 2
+
+Deploy:
+  stage: deploy
+  retry: 2
+  script:
+    - docker-compose pull
+    - docker stack rm $CI_PROJECT_NAME
+    - docker stack deploy -c docker-compose.yml $CI_PROJECT_NAME
